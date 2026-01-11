@@ -10,8 +10,21 @@ from constants import BASE_URL, REGISTER_ENDPOINT
 from enums.roles import Roles
 from models.base_models import UserData
 
-
 from api.api_manager import APIManager
+
+from sqlalchemy.orm import Session
+from db_requester.db_client import get_db_session
+
+
+@pytest.fixture(scope="module")
+def db_session() -> Session:
+    """
+    Фикстура, которая создает и возвращает сессию для работы с базой данных
+    После завершения теста сессия автоматически закрывается
+    """
+    db_session = get_db_session()
+    yield db_session
+    db_session.close()
 
 
 @pytest.fixture(name="test_user")
