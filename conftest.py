@@ -14,6 +14,7 @@ from api.api_manager import APIManager
 
 from sqlalchemy.orm import Session
 from db_requester.db_client import get_db_session
+from db_requester.db_helpers import DBHelper
 
 
 @pytest.fixture(scope="module")
@@ -25,6 +26,25 @@ def db_session() -> Session:
     db_session = get_db_session()
     yield db_session
     db_session.close()
+
+
+@pytest.fixture()
+def db_helper(db_session) -> DBHelper:
+    """Фикстура для экземпляра хелпера"""
+    db_helper = DBHelper(db_session)
+    return db_helper
+
+
+@pytest.fixture()
+def created_test_user(db_helper: DBHelper):
+    """
+    Фикстура, которая создает тестового пользователя в БД и удаляет его после завершения теста
+    """
+    user = db_helper.create_test_user(DataGenerator.generate_user_data())
+    yield user
+    # Cleanup после теста
+    if db_helper.get_user_by_id(user.id):
+        db_helper.delete_user(user)
 
 
 @pytest.fixture(name="test_user")
