@@ -47,6 +47,16 @@ def created_test_user(db_helper: DBHelper):
         db_helper.delete_user(user)
 
 
+@pytest.fixture()
+def created_movie(db_helper: DBHelper):
+    """Фикстура, которая создает тестовый фильм в БД и удаляет его после завершения теста"""
+    movie = db_helper.create_test_movie(DataGenerator.generate_movie_data())
+    yield movie
+    # Cleanup после теста
+    if db_helper.get_movie_by_id(movie.id):
+        db_helper.delete_movie(movie)
+
+
 @pytest.fixture(name="test_user")
 def test_user_data() -> UserData:
     """Генерация случайного пользователя для тестов."""

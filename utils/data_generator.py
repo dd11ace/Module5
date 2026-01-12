@@ -68,6 +68,21 @@ class DataGenerator:
         return movie_data
 
     @staticmethod
+    def generate_movie_data() -> dict:
+        return {
+            "id": random.randint(50000, 60000),
+            "name": faker.sentence(nb_words=3),
+            "price": random.randint(100, 1000),
+            "description": faker.text(max_nb_chars=200),
+            "image_url": faker.image_url(),
+            "location": random.choice(["SPB", "MSK"]),
+            "published": random.choice([True, False]),
+            "rating": random.randint(1, 5),
+            "genre_id": random.randint(1, 10),
+            "created_at": datetime.datetime.now(),
+        }
+
+    @staticmethod
     def generate_user_data() -> dict:
         """Генерирует данные для тестового пользователя"""
         from uuid import uuid4

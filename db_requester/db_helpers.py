@@ -67,6 +67,11 @@ class DBHelper:
             .first()
         )
 
+    def delete_movie(self, movie: MovieDBModel):
+        """Удаление фильма"""
+        self.db_session.delete(movie)
+        self.db_session.commit()
+
     def cleanup_test_data(self, objects_to_delete: list):
         """Очищает тестовые данные"""
         for obj in objects_to_delete:
