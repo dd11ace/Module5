@@ -8,7 +8,7 @@ from custom_requester.custom_requester import CustomRequester
 from enums.roles import Roles
 from models.base_models import RegisterUserResponse
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 from pytest_mock import mocker
@@ -27,9 +27,7 @@ class WorldClockResponse(BaseModel):
     ordinalDate: str
     serviceRespones: None
 
-    class Config:
-        # Разрешаем использование алиасов при парсинге JSON
-        allow_population_by_field_name = True
+    model_config = ConfigDict(validate_by_name=True)
 
 
 # Модель для запроса к сервису TodayIsHoliday
@@ -81,9 +79,9 @@ class TestTodayIsHolidayServiceAPI:
             "Сегодня нет праздника!"
         )
 
-    # Modul_4\Cinescope\tests\api\test_mock_services.py
-    # from pytest_mock import mocker
-    # from unittest.mock import Mock
+    
+    from pytest_mock import mocker
+    from unittest.mock import Mock
 
     def test_what_is_today_BY_MOCK(self, mocker):
         # Создаем мок для функции get_worldclockap_time
@@ -209,8 +207,7 @@ class TestTodayIsHolidayServiceAPI:
         assert what_is_today_data.message == "Международный женский день", "8 марта же?"
 '''
 
-
-# Modul_4\Cinescope\tests\api\test_mock_services.py
+"""
 # Функция выполняющая запрос в Fake сервис worldclockapi для получения текущей даты
 def get_fake_worldclockap_time() -> WorldClockResponse:
     # Выполняем GET-запрос
@@ -256,3 +253,4 @@ class TestTodayIsHolidayServiceAPI:
         assert what_is_today_data.message == "Сегодня нет праздников в России.", (
             "Сегодня нет праздника!"
         )
+"""

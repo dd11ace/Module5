@@ -1,4 +1,5 @@
 import pytest
+import time
 import allure
 import random
 from sqlalchemy.orm import Session
@@ -88,3 +89,17 @@ class TestOtherAPI:
                 db_session.delete(stan)
                 db_session.delete(bob)
                 db_session.commit()
+
+
+@pytest.fixture
+def delay_between_retries():
+    time.sleep(2)
+    yield
+
+
+@allure.title("Тест с перезапусками")
+@pytest.mark.flaky(returns=3)
+def test_with_retries(delay_between_retries):
+    with allure.step("Шаг 1: Проверка случайного значения"):
+        result = random.choice([True, False])
+        assert result, "Тест упал, потому что результат False"
