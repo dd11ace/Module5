@@ -38,12 +38,6 @@ class TestAuth:
         assert register_user_response.email == mock_response.email, "Email не совпадает"
     """
 
-    # def test_pytest_check(self):
-    #     with check:
-    #         assert 1 + 3 == 2, "1 + 1 должно быть равно 2"
-    #         assert 1 + 2 == 2, "1 + 1 должно быть равно 2"
-    #         assert 1 + 1 == 2, "1 + 1 должно быть равно 2"
-
     def test_check_functions(self):
         check.equal(1 + 1, 2, "Проверка сложения")
         check.not_equal(2 * 2, 5, "Проверка умножения")
