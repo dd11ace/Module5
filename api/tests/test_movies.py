@@ -2,12 +2,15 @@ import pytest
 import allure
 from api.api_manager import APIManager
 from entities.user import User
-from models.movie_models import MovieBase, MoviesPaginatedResponse, MovieDeleteResponse
+from models.movie_models import MovieBase, MoviesPaginatedResponse, APIError
 
 
 @allure.epic("Тестирование позитивных movies api сценариев")
 @allure.label("qa_name", "Ivan Petrovich")
-@allure.tag("api")
+@allure.tag("api", "positive")
+@pytest.mark.api
+@pytest.mark.positive
+@pytest.mark.movies
 class TestMovies:
     """Класс для позитивных movies api тестов"""
 
@@ -18,6 +21,10 @@ class TestMovies:
     @allure.description(
         "Получение афиш фильмов с проверкой обязательных полей: count, page, pageSize, pageCount"
     )
+    @pytest.mark.critical
+    @pytest.mark.get
+    @pytest.mark.regression
+    @pytest.mark.smoke
     def test_get_movies(self, api_manager: APIManager) -> None:
         """Тестирование получение афиш"""
         with allure.step("Получение данных фильмов"):
@@ -38,6 +45,9 @@ class TestMovies:
     @allure.story("Получение фильма по ID")
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Получение детальной информации о фильме")
+    @pytest.mark.get
+    @pytest.mark.regression
+    @pytest.mark.smoke
     def test_get_movie(self, api_manager: APIManager, movie_id: int) -> None:
         """Тестирование получение фильма по ID"""
         with allure.step("Выполнение запроса GET по movie_id"):
@@ -69,6 +79,9 @@ class TestMovies:
     @allure.story("Полное изменение фильма")
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Изменение всех полей фильма")
+    @pytest.mark.patch
+    @pytest.mark.crud
+    @pytest.mark.regression
     def test_patch_movie_all_fields(
         self,
         super_admin: User,
@@ -108,6 +121,10 @@ class TestMovies:
     @pytest.mark.parametrize(
         "field", ["name", "price", "description", "location", "published", "genreId"]
     )
+    @pytest.mark.patch
+    @pytest.mark.crud
+    @pytest.mark.regression
+    @pytest.mark.parametrized
     def test_patch_movie_single_field(
         self,
         field: str,
@@ -137,6 +154,10 @@ class TestMovies:
     @allure.story("Создание нового фильма")
     @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Создание фильма")
+    @pytest.mark.post
+    @pytest.mark.crud
+    @pytest.mark.regression
+    @pytest.mark.critical
     def test_create_movie(
         self,
         test_movie: MovieBase,
@@ -144,7 +165,7 @@ class TestMovies:
     ) -> None:
         """Тестирование создания фильма"""
         with allure.step("Создание фильма через POST метод"):
-            response = super_admin.api.movies_api.create_movie(test_movie.model_dump())
+            response = super_admin.api.movies_api.create_movie(test_movie)
             response.raise_for_status()
 
             response_data = MovieBase(**response.json())
@@ -172,6 +193,10 @@ class TestMovies:
     @allure.story("Удаление фильма")
     @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Удаление филмьа по ID")
+    @pytest.mark.delete
+    @pytest.mark.crud
+    @pytest.mark.critical
+    @pytest.mark.regression
     def test_delete_movie(
         self,
         super_admin: User,
@@ -191,9 +216,7 @@ class TestMovies:
             response_after_deletion = super_admin.api.movies_api.get_movie_info(
                 movie_id, expected_status=404
             )
-            response_after_deletion_data = MovieDeleteResponse(
-                **response_after_deletion.json()
-            )
+            response_after_deletion_data = APIError(**response_after_deletion.json())
 
         with allure.step("Проверка получения удаленного фильма"):
             assert response_after_deletion_data.message == "Фильм не найден"

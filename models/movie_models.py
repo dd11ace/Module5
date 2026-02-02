@@ -25,7 +25,7 @@ class MoviesPaginatedResponse(BaseModel):
     pageCount: int
 
 
-class MovieDeleteResponse(BaseModel):
+class APIError(BaseModel):
     message: str
     error: str
     statusCode: int

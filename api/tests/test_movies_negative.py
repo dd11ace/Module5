@@ -1,8 +1,12 @@
 import pytest
-
+import allure
 from entities.user import User
+from models.movie_models import MovieBase, APIError
 
 
+@allure.epic("Тестирование негативных movies api сценариев")
+@allure.label("qa_name", "Ivan Petrovich")
+@allure.tag("api")
 class TestMoviesNegative:
     def test_create_movie_without_authorization(
         self, common_user: User, test_movie: dict
