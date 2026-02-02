@@ -26,6 +26,6 @@ class MoviesPaginatedResponse(BaseModel):
 
 
 class APIError(BaseModel):
-    message: str
+    message: list[str] | str
     error: str
     statusCode: int

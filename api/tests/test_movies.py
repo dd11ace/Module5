@@ -10,7 +10,6 @@ from models.movie_models import MovieBase, MoviesPaginatedResponse, APIError
 @allure.tag("api", "positive")
 @pytest.mark.api
 @pytest.mark.positive
-@pytest.mark.movies
 class TestMovies:
     """Класс для позитивных movies api тестов"""
 

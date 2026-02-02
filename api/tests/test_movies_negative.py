@@ -15,6 +15,9 @@ class TestMoviesNegative:
     @allure.story("Создание фильма без авторизации")
     @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Попытка создания фильма обычным пользователем")
+    @pytest.mark.critical
+    @pytest.mark.post
+    @pytest.mark.smoke
     def test_create_movie_without_authorization(
         self, common_user: User, test_movie: dict
     ) -> None:
@@ -30,6 +33,8 @@ class TestMoviesNegative:
     @allure.story("Получение несуществующего ресурса")
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Получение несуществующего фильма")
+    @pytest.mark.get
+    @pytest.mark.regression
     def test_get_movie_not_found(
         self, super_admin: User, nonexistent_movie_id: int
     ) -> None:
@@ -49,6 +54,8 @@ class TestMoviesNegative:
     @allure.story("Доступ к API методам без авторизации")
     @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Проверка всех методов API без достаточных прав")
+    @pytest.mark.critical
+    @pytest.mark.crud
     def test_methods_unauthorized(
         self,
         common_user: User,
@@ -84,6 +91,8 @@ class TestMoviesNegative:
     @allure.story("Конфликты данных")
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Создание фильма с существующим названием")
+    @pytest.mark.post
+    @pytest.mark.regression
     def test_create_movie_with_existing_name(
         self,
         existing_movie_name: str,
@@ -107,6 +116,10 @@ class TestMoviesNegative:
     @allure.story("Валидация обязательных полей")
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Создания фильма без одного обязательного поля")
+    @pytest.mark.validation
+    @pytest.mark.parametrized
+    @pytest.mark.post
+    @pytest.mark.regression
     @pytest.mark.parametrize(
         "field",
         [
@@ -144,6 +157,10 @@ class TestMoviesNegative:
     @allure.story("Валидация типов данных")
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Создание фильма с неверным типом данных в одном поле")
+    @pytest.mark.validation
+    @pytest.mark.post
+    @pytest.mark.regression
+    @pytest.mark.parametrized
     @pytest.mark.parametrize(
         ("field_name", "invalid_value"),
         [
