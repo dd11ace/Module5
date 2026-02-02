@@ -9,6 +9,7 @@ from resources.user_creds import SuperAdminCreds
 from constants import BASE_URL, REGISTER_ENDPOINT
 from enums.roles import Roles
 from models.base_models import UserData
+from models.movie_models import MovieBase
 
 from api.api_manager import APIManager
 
@@ -74,11 +75,18 @@ def test_user_data() -> UserData:
 
 
 @pytest.fixture(name="test_movie")
-def test_movie_data() -> dict:
+def test_movie_data() -> MovieBase:
     """Fixture с данными для создания фильма"""
     movie_data = DataGenerator.generate_random_movie_data()
-
-    return movie_data
+    return MovieBase(
+        name=movie_data["name"],
+        imageUrl=movie_data["imageUrl"],
+        price=movie_data["price"],
+        description=movie_data["description"],
+        location=movie_data["location"],
+        published=movie_data["published"],
+        genreId=movie_data["genreId"],
+    )
 
 
 @pytest.fixture()
