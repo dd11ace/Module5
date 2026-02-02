@@ -81,6 +81,7 @@ class TestMovies:
     @allure.title("Изменение всех полей фильма")
     @pytest.mark.patch
     @pytest.mark.crud
+    @pytest.mark.smoke
     @pytest.mark.regression
     def test_patch_movie_all_fields(
         self,
@@ -124,6 +125,7 @@ class TestMovies:
     @pytest.mark.patch
     @pytest.mark.crud
     @pytest.mark.regression
+    @pytest.mark.smoke
     @pytest.mark.parametrized
     def test_patch_movie_single_field(
         self,
@@ -156,6 +158,7 @@ class TestMovies:
     @allure.title("Создание фильма")
     @pytest.mark.post
     @pytest.mark.crud
+    @pytest.mark.smoke
     @pytest.mark.regression
     @pytest.mark.critical
     def test_create_movie(
@@ -195,6 +198,7 @@ class TestMovies:
     @allure.title("Удаление филмьа по ID")
     @pytest.mark.delete
     @pytest.mark.crud
+    @pytest.mark.smoke
     @pytest.mark.critical
     @pytest.mark.regression
     def test_delete_movie(
