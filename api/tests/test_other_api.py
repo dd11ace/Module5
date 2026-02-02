@@ -4,11 +4,13 @@ import allure
 import random
 from sqlalchemy.orm import Session
 from db_requester.models import AccountTransactionTemplate
-from utils.data_generator import DataGenerator
 
 
 @allure.epic("Тестирование транзакций")
 @allure.feature("Тестирование транзакций между счетами")
+@pytest.mark.database
+@pytest.mark.integration
+@pytest.mark.regression
 class TestOtherAPI:
     @allure.story("Корректность перевода денег между двумя счетами")
     @allure.description("""
@@ -22,6 +24,9 @@ class TestOtherAPI:
     @allure.severity(allure.severity_level.CRITICAL)
     @allure.label("qa_name", "Ivan Petrovich")
     @allure.title("Тест перевода денег между счетами 200 рублей")
+    @pytest.mark.critical
+    @pytest.mark.positive
+    @pytest.mark.smoke
     def test_accounts_transaction_template(self, db_session: Session):
         with allure.step("Создание тестовых данных в базе данных: счета Stan и Bob"):
             stan = AccountTransactionTemplate(
