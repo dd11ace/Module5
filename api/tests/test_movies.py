@@ -27,9 +27,9 @@ class TestMovies:
     def test_get_movies(self, api_manager: APIManager) -> None:
         """Тестирование получение афиш"""
         with allure.step("Получение данных фильмов"):
-            response = api_manager.movies_api.get_movies()
-            response.raise_for_status()
-            response_data = MoviesPaginatedResponse(**response.json())
+            response_data = MoviesPaginatedResponse(
+                **api_manager.movies_api.get_movies().json()
+            )
 
         with allure.step("Валидация ответа"):
             fields = ["movies", "count", "page", "pageSize", "pageCount"]
@@ -50,9 +50,9 @@ class TestMovies:
     def test_get_movie(self, api_manager: APIManager, movie_id: int) -> None:
         """Тестирование получение фильма по ID"""
         with allure.step("Выполнение запроса GET по movie_id"):
-            response = api_manager.movies_api.get_movie_info(movie_id)
-            response.raise_for_status()
-            response_data = MovieBase(**response.json())
+            response_data = MovieBase(
+                **api_manager.movies_api.get_movie_info(movie_id).json()
+            )
 
         with allure.step("Валидация ID"):
             assert response_data.id == movie_id, "ID не совпадают"
@@ -90,12 +90,11 @@ class TestMovies:
     ) -> None:
         """Тест редактирования фильма"""
         with allure.step("Выполенине запроса PATCH"):
-            response = super_admin.api.movies_api.patch_movie(
-                movie_id, movie_data=test_movie
+            response_data = MovieBase(
+                **super_admin.api.movies_api.patch_movie(
+                    movie_id, movie_data=test_movie
+                ).json()
             )
-            response.raise_for_status()
-
-            response_data = MovieBase(**response.json())
 
         with allure.step("Валидация изменений"):
             fields = [
@@ -139,11 +138,9 @@ class TestMovies:
             new_data = {field: update_value}
 
         with allure.step(f"Выполнение PATCH запроса для поля {field}"):
-            response = super_admin.api.movies_api.patch_movie(movie_id, new_data)
-            response.raise_for_status()
-
-            response_data = MovieBase(**response.json())
-
+            response_data = MovieBase(
+                **super_admin.api.movies_api.patch_movie(movie_id, new_data).json()
+            )
         with allure.step(f"Валидация поля {field}"):
             expected_value = getattr(test_movie, field)
             actual_value = getattr(response_data, field)
@@ -167,10 +164,9 @@ class TestMovies:
     ) -> None:
         """Тестирование создания фильма"""
         with allure.step("Создание фильма через POST метод"):
-            response = super_admin.api.movies_api.create_movie(test_movie)
-            response.raise_for_status()
-
-            response_data = MovieBase(**response.json())
+            response_data = MovieBase(
+                **super_admin.api.movies_api.create_movie(test_movie).json()
+            )
 
         with allure.step("Валидация ответа"):
             fields = [
@@ -207,10 +203,9 @@ class TestMovies:
     ) -> None:
         """Тест на удаление фильма по ID"""
         with allure.step("Отправка запроса DELETE"):
-            response = super_admin.api.movies_api.delete_movie(movie_id)
-            response.raise_for_status()
-
-            response_data = MovieBase(**response.json())
+            response_data = MovieBase(
+                **super_admin.api.movies_api.delete_movie(movie_id).json()
+            )
 
         with allure.step("Провека что был удален фильм с правильным ID"):
             assert response_data.id == movie_id, "ID фильмов не совпадают"

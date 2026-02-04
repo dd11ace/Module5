@@ -22,8 +22,9 @@ class TestMoviesNegative:
         self, common_user: User, test_movie: dict
     ) -> None:
         with allure.step("Выполнение запроса"):
-            response = common_user.api.movies_api.create_movie(test_movie, 403)
-            response_data = APIError(**response.json())
+            response_data = APIError(
+                **common_user.api.movies_api.create_movie(test_movie, 403).json()
+            )
         with allure.step("Валидация данных"):
             assert response_data.message == "Forbidden resource"
             assert response_data.error == "Forbidden"
@@ -40,10 +41,11 @@ class TestMoviesNegative:
     ) -> None:
         """Тест получение несуществующего фильма"""
         with allure.step("Выполнение запроса"):
-            response = super_admin.api.movies_api.get_movie_info(
-                movie_id=nonexistent_movie_id, expected_status=404
+            response_data = APIError(
+                **super_admin.api.movies_api.get_movie_info(
+                    movie_id=nonexistent_movie_id, expected_status=404
+                ).json()
             )
-            response_data = APIError(**response.json())
 
         with allure.step("Валидация данных"):
             assert response_data.message == "Фильм не найден"
@@ -56,31 +58,31 @@ class TestMoviesNegative:
     @allure.title("Проверка всех методов API без достаточных прав")
     @pytest.mark.critical
     @pytest.mark.crud
+    @pytest.mark.parametrize("method", ["create_movie", "delete_movie", "patch_movie"])
     def test_methods_unauthorized(
-        self,
-        common_user: User,
-        test_movie: MovieBase,
-        movie_id: int,
+        self, common_user: User, test_movie: MovieBase, movie_id: int, method: str
     ) -> None:
         """Тестирование запросов без авторизации"""
         with allure.step("Выполнение запроса"):
-            methods = ["create_movie", "delete_movie", "patch_movie"]
-            for method in methods:
-                match method:
-                    case "create_movie":
-                        response = common_user.api.movies_api.create_movie(
+            match method:
+                case "create_movie":
+                    response_data = APIError(
+                        **common_user.api.movies_api.create_movie(
                             test_movie, expected_status=401
-                        )
-                    case "delete_movie":
-                        response = common_user.api.movies_api.delete_movie(
+                        ).json()
+                    )
+                case "delete_movie":
+                    response_data = APIError(
+                        **common_user.api.movies_api.delete_movie(
                             movie_id, expected_status=401
-                        )
-                    case "patch_movie":
-                        response = common_user.api.movies_api.patch_movie(
+                        ).json()
+                    )
+                case "patch_movie":
+                    response_data = APIError(
+                        **common_user.api.movies_api.patch_movie(
                             movie_id, test_movie, expected_status=401
-                        )
-
-            response_data = APIError(**response.json())
+                        ).json()
+                    )
 
         with allure.step("Валидация данных"):
             assert response_data.message == "Forbidden resource"
@@ -103,10 +105,11 @@ class TestMoviesNegative:
         with allure.step("Подготовка данных"):
             test_movie.name = existing_movie_name
         with allure.step("Выполнение запроса"):
-            response = super_admin.api.movies_api.create_movie(
-                movie_data=test_movie, expected_status=409
+            response_data = APIError(
+                **super_admin.api.movies_api.create_movie(
+                    movie_data=test_movie, expected_status=409
+                ).json()
             )
-            response_data = APIError(**response.json())
         with allure.step("Валидация данных"):
             assert response_data.message == "Фильм с таким названием уже существует"
             assert response_data.error == "Conflict"
@@ -141,10 +144,11 @@ class TestMoviesNegative:
         with allure.step("Подготовка данных"):
             setattr(test_movie, field, None)
         with allure.step("Выполнение запроса"):
-            response = super_admin.api.movies_api.create_movie(
-                test_movie, expected_status=400
+            response_data = APIError(
+                **super_admin.api.movies_api.create_movie(
+                    test_movie, expected_status=400
+                ).json()
             )
-            response_data = APIError(**response.json())
 
         with allure.step("Валидация данных"):
             assert response_data.message is not None, (
@@ -185,10 +189,11 @@ class TestMoviesNegative:
             movie_data = test_movie.model_dump()
             movie_data[field_name] = invalid_value
         with allure.step("Выполнение запроса"):
-            response = super_admin.api.movies_api.create_movie(
-                movie_data, expected_status=400
+            response_data = APIError(
+                **super_admin.api.movies_api.create_movie(
+                    movie_data, expected_status=400
+                ).json()
             )
-            response_data = APIError(**response.json())
         with allure.step("Валидация данных"):
             assert response_data.message is not None, (
                 "Отсутствует сообщение об ошибке в логе ответа"

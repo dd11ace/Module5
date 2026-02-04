@@ -12,6 +12,8 @@ MOVIES_ENDPOINT = "/movies"
 
 USER_ENDPOINT = "/user"
 
+WORLDCLOCKNOW = "http://worldclockapi.com/api/json/utc/now"
+
 # Colors for logs
 GREEN = "\033[32m"
 RED = "\033[31m"
