@@ -10,40 +10,14 @@ from unittest.mock import Mock
 from pytest_check import check
 
 
+@allure.epic("Аутентификация")
+@allure.feature("Аутентификация пользователя")
+@allure.tag("api", "positive")
+@allure.label("qa_name", "Ivan Petrovich")
+@pytest.mark.smoke
+@pytest.mark.positive
+@pytest.mark.api
 class TestAuth:
-    """
-    def test_register_user_mock(
-        self, api_manager: APIManager, test_user: UserData, mocker
-    ):
-        # Ответ полученный из мок сервиса
-        mock_response = RegisterUserResponse(
-            id="id",
-            email="email@email.com",
-            fullName="fullName",
-            verified=True,
-            banned=False,
-            roles=[Roles.SUPER_ADMIN],
-            createdAt=str(datetime.datetime.now()),
-        )
-
-        # Мокаем метод register_user в auth_api
-        mocker.patch.object(
-            api_manager.auth_api,  # Объект, который нужно замокать
-            "register_user",  # Метод, который нужно замокать
-            return_value=mock_response,  # Фиктивный ответ
-        )
-        # Вызываем метод, который должен быть замокан
-        register_user_response = api_manager.auth_api.register_user(test_user)
-        # Проверяем, что ответ соответствует ожидаемому
-        assert register_user_response.email == mock_response.email, "Email не совпадает"
-    """
-
-    def test_check_functions(self):
-        check.equal(1 + 1, 2, "Проверка сложения")
-        check.not_equal(2 * 2, 5, "Проверка умножения")
-        check.is_true(1 == 1, "Проверка истинности")
-        check.is_in("hello", "hello world", "Проверка вхождения строки")
-
     @allure.title("Тест регистрации пользователя с помощью Mock")
     @allure.severity(allure.severity_level.MINOR)
     @allure.label("qa_name", "Ivan Petrovich")
@@ -51,7 +25,7 @@ class TestAuth:
         self, api_manager: APIManager, test_user: UserData, mocker
     ):
         with allure.step("Мокаем метод register_user в auth_api"):
-            mock_response = RegisterUserResponse(  # Фиктивный ответ
+            mock_response = RegisterUserResponse(
                 id="id",
                 email="email@email.com",
                 fullName="fullName",
@@ -61,9 +35,9 @@ class TestAuth:
                 createdAt=str(datetime.datetime.now()),
             )
             mocker.patch.object(
-                api_manager.auth_api,  # Объект, который нужно замокать
-                "register_user",  # Метод, который нужно замокать
-                return_value=mock_response,  # Фиктивный ответ
+                api_manager.auth_api,
+                "register_user",
+                return_value=mock_response,
             )
 
         with allure.step("Вызываем мтеод, который должен быть замокан"):
