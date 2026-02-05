@@ -26,10 +26,12 @@ class TestUser:
         self, api_manager: APIManager, creation_user_data: UserData
     ) -> None:
         with allure.step("Отправка запроса"):
-            response = api_manager.auth_api.register_user(
-                user_data=creation_user_data
-            ).json()
-            register_user_response = RegisterUserResponse(**response)
+            register_user_response = RegisterUserResponse(
+                **api_manager.auth_api.register_user(
+                    user_data=creation_user_data
+                ).json()
+            )
+
         with allure.step("Валидация данных"):
             assert register_user_response.email == creation_user_data.email, (
                 "Email не совпадает"
@@ -51,11 +53,11 @@ class TestUser:
         with allure.step("Подготовка данных"):
             user_data_dict = creation_user_data.model_dump(mode="json")
         with allure.step("Отправка запросов"):
-            created_user_response = super_admin.api.user_api.create_user(
-                user_data_dict
-            ).json()
+            created_user_response = RegisterUserResponse(
+                **super_admin.api.user_api.create_user(user_data_dict).json()
+            )
             response_by_id = super_admin.api.user_api.get_user(
-                created_user_response["id"]
+                created_user_response.id
             ).json()
             response_by_email = super_admin.api.user_api.get_user(
                 creation_user_data.email

@@ -3,6 +3,8 @@ from custom_requester.custom_requester import CustomRequester
 
 from constants import AUTH_URL, REGISTER_ENDPOINT, LOGIN_ENDPOINT
 
+from models.auth_models import UserCredentials
+
 
 class AuthAPI(CustomRequester):
     """Класс для управления аутентификацией"""
@@ -42,7 +44,9 @@ class AuthAPI(CustomRequester):
         )
 
     def authenticate(self, user_creds: tuple) -> None:
-        login_data = {"email": user_creds[0], "password": user_creds[1]}
+        login_data = UserCredentials(
+            **{"email": user_creds[0], "password": user_creds[1]}
+        )
 
         response = self.login_user(login_data).json()
         if "accessToken" not in response:
