@@ -1,47 +1,23 @@
-from sqlalchemy import create_engine, Column, String, Boolean, DateTime, text
-from sqlalchemy.orm import declarative_base, sessionmaker
-from constants import (
-    DATABASE_HOST,
-    DATABASE_PORT,
-    DATABASE_NAME,
-    DATABASE_USERNAME,
-    DATABASE_PASSWORD,
-)
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from db_models.user import UserDBModel
+from constants import DATABASE_CONNECTION_STRING
 
 
 # формируем URL для подключения к базе
-connection_string = f"postgresql+psycopg2://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}"
+connection_string = DATABASE_CONNECTION_STRING
 # обьект для подключения к базе данных
 engine = create_engine(connection_string)
 
 
 def sdl_alchemy_ORM():
-    # Базовый класс для моделей
-    Base = declarative_base()
-
-    # Модель таблицы users
-    class User(Base):
-        __tablename__ = "users"
-        id = Column(String, primary_key=True)
-        email = Column(String)
-        full_name = Column(String)
-        password = Column(String)
-        created_at = Column(DateTime)
-        updated_at = Column(DateTime)
-        verified = Column(Boolean)
-        banned = Column(Boolean)
-        roles = Column(String)
-
-    # Создаем сессию
     Session = sessionmaker(bind=engine)
     session = Session()
 
     user_id = "d44f2c26-0b23-451e-9843-a2bcf35216c4"
 
-    # Выполняем запрос
-    user = session.query(User).filter(User.id == user_id).first()
+    user = session.query(UserDBModel).filter(UserDBModel.id == user_id).first()
 
-    # Выводим результат (у нас в руках уже не строка а обьект!)
     if user:
         print(f"ID: {user.id}")
         print(f"Email: {user.email}")
