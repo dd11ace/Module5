@@ -60,7 +60,8 @@ class TestOtherAPI:
 
             with allure.step("Проверяем, что на счете достаточно средств"):
                 if from_account.balance < amount:
-                    raise ValueError("Недостаточно средств на счете")
+                    db_session.rollback()
+                    pytest.fail("Ошибка при переводе денег: Недостаточно средств")
 
             with allure.step("Выполненяем перевод"):
                 from_account.balance -= amount

@@ -63,10 +63,7 @@ class CustomRequester:
 
             return response
         except requests.exceptions.ConnectionError as e:
-            print(e)
-            raise
-        except requests.exceptions.RequestException as e:
-            print(e)
+            print("Ошибка соединения:", e)
             raise
         except Exception as e:
             print(e)
@@ -92,9 +89,7 @@ class CustomRequester:
         """
         try:
             request = response.request
-            headers = " \\\n".join(
-                [f"-H '{header}: {value}'" for header, value in request.headers.items()]
-            )
+            headers = f"{request.headers.items()}"
             full_test_name = f"pytest {os.environ.get('PYTEST_CURRENT_TEST', '').replace(' (call)', '')}"
 
             body = ""

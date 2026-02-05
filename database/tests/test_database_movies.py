@@ -1,16 +1,17 @@
 import pytest
 from entities.user import User
 from db_requester.db_helpers import DBHelper
-from db_models.movie import MovieDBModel
+from db_models.movie import MovieDBSchema
+from models.movie_models import MovieBase
 
 from utils.data_generator import DataGenerator
 
 
 class TestDatabaseMovies:
     def test_movie_creation_and_deletion(
-        self, super_admin: User, db_helper: DBHelper, test_movie: dict
+        self, super_admin: User, db_helper: DBHelper, test_movie: MovieBase
     ):
-        movie_data = DataGenerator.generate_movie_data()
+        movie_data = test_movie
         movie_before = db_helper.get_movie_by_id(movie_data["id"])
 
         assert movie_before is None
