@@ -1,5 +1,6 @@
 import pytest
 import allure
+from pytest_check import check_functions as check
 from entities.user import User
 from models.movie_models import MovieBase, APIError
 
@@ -26,9 +27,9 @@ class TestMoviesNegative:
                 **common_user.api.movies_api.create_movie(test_movie, 403).json()
             )
         with allure.step("Валидация данных"):
-            assert response_data.message == "Forbidden resource"
-            assert response_data.error == "Forbidden"
-            assert response_data.statusCode == 403
+            check.equal(response_data.message, "Фильм не найден")
+            check.equal(response_data.error, "Not Found")
+            check.equal(response_data.statusCode, 403)
 
     @allure.feature("Негативные сценарии")
     @allure.story("Получение несуществующего ресурса")
@@ -48,9 +49,9 @@ class TestMoviesNegative:
             )
 
         with allure.step("Валидация данных"):
-            assert response_data.message == "Фильм не найден"
-            assert response_data.error == "Not Found"
-            assert response_data.statusCode == 404
+            check.equal(response_data.message, "Фильм не найден")
+            check.equal(response_data.error, "Not Found")
+            check.equal(response_data.statusCode, 404)
 
     @allure.feature("Авторизация и доступ")
     @allure.story("Доступ к API методам без авторизации")
@@ -85,9 +86,9 @@ class TestMoviesNegative:
                     )
 
         with allure.step("Валидация данных"):
-            assert response_data.message == "Forbidden resource"
-            assert response_data.error == "Forbidden"
-            assert response_data.statusCode == 403
+            check.equal(response_data.message, "Forbidden resource")
+            check.equal(response_data.error, "Forbidden")
+            check.equal(response_data.statusCode, 403)
 
     @allure.feature("Негативные сценарии")
     @allure.story("Конфликты данных")
@@ -111,9 +112,9 @@ class TestMoviesNegative:
                 ).json()
             )
         with allure.step("Валидация данных"):
-            assert response_data.message == "Фильм с таким названием уже существует"
-            assert response_data.error == "Conflict"
-            assert response_data.statusCode == 409
+            check.equal(response_data.message, "Фильм с таким названием уже существует")
+            check.equal(response_data.error, "Conflict")
+            check.equal(response_data.statusCode, 409)
 
     @allure.feature("Негативные сценарии")
     @allure.story("Валидация обязательных полей")
@@ -151,11 +152,11 @@ class TestMoviesNegative:
             )
 
         with allure.step("Валидация данных"):
-            assert response_data.message is not None, (
-                "Отсутствует сообщение об ошибке в логе ответа"
+            check.is_not_none(
+                response_data.message, "Отсутствует сообщение об ошибке в логе ответа"
             )
-            assert response_data.error == "Bad Request"
-            assert response_data.statusCode == 400
+            check.equal(response_data.error, "Bad Request")
+            check.equal(response_data.statusCode, 400)
 
     @allure.feature("негативные сценарии")
     @allure.story("Валидация типов данных")
@@ -195,8 +196,8 @@ class TestMoviesNegative:
                 ).json()
             )
         with allure.step("Валидация данных"):
-            assert response_data.message is not None, (
-                "Отсутствует сообщение об ошибке в логе ответа"
+            check.is_not_none(
+                response_data.message, "Отсутствует сообщение об ошибке в логе ответа"
             )
-            assert response_data.error == "Bad Request"
-            assert response_data.statusCode == 400
+            check.equal(response_data.error, "Bad Request")
+            check.equal(response_data.statusCode, 400)

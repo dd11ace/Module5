@@ -1,5 +1,6 @@
 import pytest
 import allure
+from pytest_check import check_functions as check
 from api.api_manager import APIManager
 from entities.user import User
 from models.movie_models import MovieBase, MoviesPaginatedResponse, APIError
@@ -38,7 +39,7 @@ class TestMovies:
                 with allure.step(f"Проверка наличия {field} в ответе"):
                     field_value = getattr(response_data, field)
 
-                    assert field_value is not None, f"Поле {field} имеет значение None"
+                    check.is_not_none(field_value, f"Поле {field} имеет значение None")
 
     @allure.feature("Получение данных")
     @allure.story("Получение фильма по ID")
@@ -72,7 +73,8 @@ class TestMovies:
             ]
             for field in fields:
                 field_data = getattr(response_data, field)
-                assert field_data is not None, f"Поле {field} имеет значение None"
+
+                check.is_not_none(field_data, f"Поле {field} имеет значение None")
 
     @allure.feature("Изменение данных")
     @allure.story("Полное изменение фильма")
@@ -91,9 +93,7 @@ class TestMovies:
         """Тест редактирования фильма"""
         with allure.step("Выполенине запроса PATCH"):
             response_data = MovieBase(
-                **super_admin.api.movies_api.patch_movie(
-                    movie_id, movie_data=test_movie
-                ).json()
+                **super_admin.api.movies_api.patch_movie(movie_id, test_movie).json()
             )
 
         with allure.step("Валидация изменений"):
@@ -110,8 +110,8 @@ class TestMovies:
                 expected_value = getattr(test_movie, field)
                 actual_value = getattr(response_data, field)
 
-                assert response_data.id == movie_id, "ID не сопадают"
-                assert expected_value == actual_value, f"Поле {field} не изменилось"
+                check.equal(response_data.id, movie_id, "ID не сопадают")
+                check.equal(expected_value, actual_value, f"Поле {field} не изменилось")
 
     @allure.feature("Изменение данных")
     @allure.story("Частичное изменение фильма")
@@ -145,8 +145,10 @@ class TestMovies:
             expected_value = getattr(test_movie, field)
             actual_value = getattr(response_data, field)
 
-            assert response_data.id == movie_id, "ID не совпадают"
-            assert expected_value == actual_value, f"Ошибка: поле {field} не обновилось"
+            check.equal(response_data.id, movie_id, "ID не совпадают")
+            check.equal(
+                expected_value, actual_value, f"Ошибка: поле {field} не обновилось"
+            )
 
     @allure.feature("Создание данных")
     @allure.story("Создание нового фильма")
@@ -183,8 +185,10 @@ class TestMovies:
                     expected_value = getattr(test_movie, field)
                     actual_value = getattr(response_data, field)
 
-                    assert expected_value == actual_value, (
-                        f"Поле {field} не совпадает: Ожидалось {expected_value}, получено {actual_value}"
+                    check.equal(
+                        expected_value,
+                        actual_value,
+                        f"Поле {field} не совпадает: Ожидалось {expected_value}, получено {actual_value}",
                     )
 
     @allure.feature("Удаление данных")
@@ -217,6 +221,6 @@ class TestMovies:
             response_after_deletion_data = APIError(**response_after_deletion.json())
 
         with allure.step("Проверка получения удаленного фильма"):
-            assert response_after_deletion_data.message == "Фильм не найден"
-            assert response_after_deletion_data.error == "Not Found"
-            assert response_after_deletion_data.statusCode == 404
+            check.equal(response_after_deletion_data.message, "Фильм не найден")
+            check.equal(response_after_deletion_data.error, "Not Found")
+            check.equal(response_after_deletion_data.statusCode, 404)
