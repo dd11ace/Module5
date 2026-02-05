@@ -1,5 +1,6 @@
 import pytest
 import allure
+from pytest_check import check_functions as check
 from api.api_manager import APIManager
 from models.base_models import RegisterUserResponse, UserData
 from entities.user import User
@@ -33,14 +34,16 @@ class TestUser:
             )
 
         with allure.step("Валидация данных"):
-            assert register_user_response.email == creation_user_data.email, (
-                "Email не совпадает"
+            check.equal(
+                register_user_response.email,
+                creation_user_data.email,
+                "Email не совпадает",
             )
-            assert (
-                register_user_response.get_roles_as_strings()
-                == creation_user_data.get_roles_as_strings()
+            check.equal(
+                register_user_response.get_roles_as_strings(),
+                creation_user_data.get_roles_as_strings(),
             )
-            assert Roles.USER in register_user_response.roles
+            check.is_true(Roles.USER in register_user_response.roles)
 
     @allure.feature("Получение пользователей")
     @allure.story("Получение пользователя по разным идентификаторам")
@@ -63,14 +66,19 @@ class TestUser:
                 creation_user_data.email
             ).json()
         with allure.step("Валидация данных"):
-            assert response_by_id == response_by_email, (
-                "Содержание ответов должно быть идентичным"
+            check.equal(
+                response_by_id,
+                response_by_email,
+                "Содержание ответов должно быть идентичным",
             )
-            assert response_by_id.get("id") and response_by_id["id"] != "", (
-                "ID должен быть не пустым"
+            check.is_true(
+                response_by_id.get("id") and response_by_id["id"] != "",
+                "ID должен быть не пустым",
             )
-            assert response_by_id.get("email") == creation_user_data.email
-            assert response_by_id.get("fullName") == creation_user_data.fullName
-            assert response_by_id.get("roles", []) == creation_user_data.roles_strings
-            assert response_by_id.get("verified") is True
-            assert response_by_id.get("banned") is False
+            check.equal(response_by_id.get("email"), creation_user_data.email)
+            check.equal(response_by_id.get("fullName"), creation_user_data.fullName)
+            check.equal(
+                response_by_id.get("roles", []), creation_user_data.roles_strings
+            )
+            check.is_true(response_by_id.get("verified"))
+            check.is_false(response_by_id.get("banned"))
