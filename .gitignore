@@ -1,0 +1,13 @@
+.idea/
+.vscode/
+.venv/
+.DS_Store
+/venv/
+__pycache__/
+.pytest_cache
+*.db
+*.xlsx
+*.log
+*.csv
+*.env
+allure-results/
