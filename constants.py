@@ -12,6 +12,7 @@ MOVIES_ENDPOINT = "/movies"
 
 USER_ENDPOINT = "/user"
 
+# URLS
 WORLDCLOCKNOW = "http://worldclockapi.com/api/json/utc/now"
 
 # Colors for logs
@@ -25,4 +26,5 @@ DATABASE_PORT = 31200
 DATABASE_NAME = "db_movies"
 DATABASE_USERNAME = "postgres"
 DATABASE_PASSWORD = "AmwFrtnR2"
+
 DATABASE_CONNECTION_STRING = f"postgresql+psycopg2://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}"

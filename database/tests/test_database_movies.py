@@ -28,7 +28,7 @@ class TestDatabaseMovies:
         with allure.step("Проверка, что фильма нет в базе перед созданием"):
             movie_before = db_helper.get_movie_by_id(movie_data["id"])
 
-            assert movie_before is None
+            check.is_none(movie_before)
         with allure.step("Создание фильма в базе данных"):
             created_movie = db_helper.create_test_movie(movie_data)
         with allure.step("Получение созданного фильма по ID"):
